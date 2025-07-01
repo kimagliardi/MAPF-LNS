@@ -1,6 +1,5 @@
 from utils.parser import read_map_file, read_scen_file
 from algorithms.pp import PrioritizedPlanningSolver
-from algorithms.pp import PrioritizedPlanningSolver
 from visualize import plot_paths  
 
 import os

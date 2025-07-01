@@ -1,2 +1,2 @@
-Tempo de execução: 0.0000 segundos
-Soma dos comprimentos dos caminhos: 5
+Tempo de execução: 0.0030 segundos
+Soma dos comprimentos dos caminhos: 128

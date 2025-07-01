@@ -1,4 +1,8 @@
 import heapq
+
+def manhattan_distance(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
 class PrioritizedPlanningSolver:    
     def __init__(self, map_data, starts, goals):
         self.map = map_data
@@ -6,7 +10,7 @@ class PrioritizedPlanningSolver:
         self.goals = goals
 
     def plan_paths(self):
-        return [[start, goal] for start, goal in zip(self.starts, self.goals)]
+        return [self.a_star(start, goal, None) for start, goal in zip(self.starts, self.goals)]
     
     def a_star(self, start, goal, constraints):
         open_list = []

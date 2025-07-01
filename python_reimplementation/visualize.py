@@ -20,7 +20,7 @@ def plot_paths(map_data, starts, goals, paths, output_file="results/paths_visual
         for j in range(len(path) - 1):
             x1, y1 = path[j]
             x2, y2 = path[j + 1]
-            ax.plot([y1 + 0.5, y2 + 0.5], [rows - x1 - 0.5, rows - x2 - 0.5], color=color, linewidth=2)
+            ax.plot([y1 + 0.5, y2 + 0.5], [rows - x1 - 0.5, rows - x2 - 0.5], color=color, linewidth=6)
 
         # Marca início e fim
         sx, sy = path[0]
