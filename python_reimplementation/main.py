@@ -1,23 +1,23 @@
 from utils.parser import read_map_file, read_scen_file
 from algorithms.pp import PrioritizedPlanningSolver
 from visualize import plot_paths  
-
+from animate import Animation
 import os
 import time
 
-# Garante que a pasta de resultados exista
+# Ensure that the results folder exists
 os.makedirs("results", exist_ok=True)
 
 def main():
-    # Caminhos para os arquivos de exemplo
+    # Paths to the example files
     map_file = 'examples/random-32-32-20.map'
     scen_file = 'examples/random-32-32-20-random-1.scen'
 
-    # Leitura dos dados
+    # Data reading
     map_data = read_map_file(map_file)
-    starts, goals = read_scen_file(scen_file, num_agents=5)  # teste inicial com 5 agentes
+    starts, goals = read_scen_file(scen_file, num_agents=5)  # initial test with 5 agents
 
-    # Planejamento
+    # Planning
     solver = PrioritizedPlanningSolver(map_data, starts, goals)
     start_time = time.time()    
     paths = solver.plan_paths() 
@@ -26,29 +26,29 @@ def main():
 
     total_cost = sum(len(path) - 1 for path in paths)
 
-    # Saída
+    # Output
     if paths is None:
-        print("Falha ao encontrar caminhos para todos os agentes.")
+        print("Failed to find paths for all agents.")
     else:
         for i, path in enumerate(paths):
-            print(f"Agente {i}: {path}")
+            print(f"Agent {i}: {path}")
 
-        # (Opcional) salvar em arquivo
+        # (Optional) save to file
         with open("results/solution_output.txt", "w") as f:
             for i, path in enumerate(paths):
-                f.write(f"Agente {i}: {path}\n")
+                f.write(f"Agent {i}: {path}\n")
                 
-        # Visualização dos caminhos
+        # Visualization of the paths
         plot_paths(map_data, starts, goals, paths)
         
-        print(f"\nTempo de execução: {runtime:.4f} segundos")
+        print(f"\nExecution time: {runtime:.4f} seconds")
 
-        print(f"Soma dos comprimentos dos caminhos: {total_cost}")
+        print(f"Sum of path lengths: {total_cost}")
 
-        # Salvar em arquivo
+        # Save to file
         with open("results/pp_python_results.txt", "w") as f:
-            f.write(f"Tempo de execução: {runtime:.4f} segundos\n")
-            f.write(f"Soma dos comprimentos dos caminhos: {total_cost}\n")
+            f.write(f"Execution time: {runtime:.4f} seconds\n")
+            f.write(f"Sum of path lengths: {total_cost}\n")
 
 
 if __name__ == "__main__":

@@ -1,2 +1,2 @@
-Tempo de execução: 0.0030 segundos
-Soma dos comprimentos dos caminhos: 128
+Execution time: 0.0029 seconds
+Sum of path lengths: 128
