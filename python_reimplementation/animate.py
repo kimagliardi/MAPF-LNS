@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from matplotlib import patches
 from matplotlib.patches import Circle, Rectangle
 import matplotlib.pyplot as plt
 import numpy as np
@@ -46,7 +47,7 @@ class Animation:
         self.patches.append(Rectangle((x_min, y_min), x_max - x_min, y_max - y_min, facecolor='none', edgecolor='gray'))
         for i in range(len(self.my_map)):
             for j in range(len(self.my_map[0])):
-                if self.my_map[i][j]:
+                if self.my_map[i][j] == '.':
                     self.patches.append(Rectangle((i - 0.5, j - 0.5), 1, 1, facecolor='gray', edgecolor='gray'))
 
         # create agents:

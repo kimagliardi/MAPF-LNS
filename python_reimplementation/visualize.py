@@ -7,13 +7,13 @@ def plot_paths(map_data, starts, goals, paths, output_file="results/paths_visual
     cols = len(map_data[0])
     fig, ax = plt.subplots(figsize=(cols / 2, rows / 2))
 
-    # Desenha o mapa
+    # Draw map grid
     for x in range(rows):
         for y in range(cols):
             if map_data[x][y] != '.':
                 ax.add_patch(patches.Rectangle((y, rows - x - 1), 1, 1, color='black'))
 
-    # Desenha os caminhos dos agentes
+    # Draw start and goal positions
     colors = ['red', 'blue', 'green', 'orange', 'purple']
     for i, path in enumerate(paths):
         color = colors[i % len(colors)]

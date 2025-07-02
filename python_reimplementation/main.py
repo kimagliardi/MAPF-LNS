@@ -19,9 +19,9 @@ def main():
 
     # Planning
     solver = PrioritizedPlanningSolver(map_data, starts, goals)
-    start_time = time.time()    
-    paths = solver.plan_paths() 
-    
+
+    start_time = time.time()
+    paths = solver.plan_paths()     
     runtime = time.time() - start_time
 
     total_cost = sum(len(path) - 1 for path in paths)
@@ -41,6 +41,11 @@ def main():
         # Visualization of the paths
         plot_paths(map_data, starts, goals, paths)
         
+        print("Paths visualized and saved to results/paths_visualization.png")
+        # Animation of the paths
+        animation = Animation(map_data, starts, goals, paths)
+        animation.show()
+
         print(f"\nExecution time: {runtime:.4f} seconds")
 
         print(f"Sum of path lengths: {total_cost}")
