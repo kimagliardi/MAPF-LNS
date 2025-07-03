@@ -10,12 +10,12 @@ os.makedirs("results", exist_ok=True)
 
 def main():
     # Paths to the example files
-    map_file = 'examples/random-32-32-20.map'
-    scen_file = 'examples/random-32-32-20-random-1.scen'
+    map_file = 'python_reimplementation/examples/random-32-32-20.map'
+    scen_file = 'python_reimplementation/examples/random-32-32-20-random-1.scen'
 
     # Data reading
     map_data = read_map_file(map_file)
-    starts, goals = read_scen_file(scen_file, num_agents=5)  # initial test with 5 agents
+    starts, goals = read_scen_file(scen_file, num_agents=15)  # initial test with 5 agents
 
     # Planning
     solver = PrioritizedPlanningSolver(map_data, starts, goals)
