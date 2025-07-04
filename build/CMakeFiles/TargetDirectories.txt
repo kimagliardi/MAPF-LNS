@@ -1,3 +1,0 @@
-/home/miromar/Documentos/Pessoal/Doutorado/Análise de Algoritmos/MAPF-LNS/MAPF-LNS/build/CMakeFiles/rebuild_cache.dir
-/home/miromar/Documentos/Pessoal/Doutorado/Análise de Algoritmos/MAPF-LNS/MAPF-LNS/build/CMakeFiles/edit_cache.dir
-/home/miromar/Documentos/Pessoal/Doutorado/Análise de Algoritmos/MAPF-LNS/MAPF-LNS/build/CMakeFiles/lns.dir

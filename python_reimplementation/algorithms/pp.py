@@ -65,8 +65,6 @@ class PrioritizedPlanningSolver:
 
                 if 0 <= nx < rows and 0 <= ny < cols:
                     if self.map[nx][ny] == ".":  # free cell
-                        if constraints and (nx, ny) in constraints:
-                            continue
                         neighbor = (nx, ny)
                         if (neighbor, g + 1) not in closed_set:
                             new_path = path + [neighbor]
