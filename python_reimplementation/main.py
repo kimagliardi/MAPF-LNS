@@ -2,6 +2,7 @@ from utils.parser import read_map_file, read_scen_file
 from algorithms.pp import PrioritizedPlanningSolver
 from visualize import plot_paths  
 from animate import Animation
+
 import os
 import time
 
@@ -10,8 +11,8 @@ os.makedirs("results", exist_ok=True)
 
 def main():
     # Paths to the example files
-    map_file = 'python_reimplementation/examples/random-32-32-20.map'
-    scen_file = 'python_reimplementation/examples/random-32-32-20-random-1.scen'
+    map_file = 'examples/random-32-32-20.map'
+    scen_file = 'examples/random-32-32-20-random-1.scen'
 
     # Data reading
     map_data = read_map_file(map_file)

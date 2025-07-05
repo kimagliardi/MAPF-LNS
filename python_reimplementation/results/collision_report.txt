@@ -1,0 +1,1 @@
+Colisão detectada no tempo 27 entre agentes 1 e 0 na posição (22, 24)
