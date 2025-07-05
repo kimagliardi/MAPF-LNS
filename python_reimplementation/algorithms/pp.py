@@ -50,8 +50,6 @@ class PrioritizedPlanningSolver:
             # Update constraints with the new path
             for time, position in enumerate(agent.path):
                 for other_agent in self.agents:
-                    if other_agent.path is None:
-                        continue
                     if other_agent.id != agent.id:
                         # Add constraints for other agents' positions at this time step
                         constraints.append(
