@@ -60,11 +60,19 @@ class PrioritizedPlanningSolver:
                                 "is_goal": time == len(agent.path) - 1,
                             }
                         )
+                        constraints.append(
+                            {
+                                "agent": other_agent.id,
+                                "position": [position],
+                                "time": time - 1,
+                                "is_goal": time == len(agent.path) - 1,
+                            }
+                        )
                         if time < len(agent.path) - 1:
                             constraints.append(
                                 {
                                     "agent": agent.id,
-                                    "position": [agent.path[time + 1], position],
+                                    "position": [agent.path[time + 1]],
                                     "time": time + 1,
                                     "is_goal": False,
                                 }
@@ -150,7 +158,7 @@ def format_constraints(constraints, agent):
         if c["agent"] == agent.id:
             time = c["time"]
             if time not in formatted_constraints:
-                formatted_constraints[time] = [c]
+                formatted_constraints[time] = []
             formatted_constraints[time].append(
                 {"position": c["position"], "is_goal": c["is_goal"]}
             )
@@ -177,10 +185,7 @@ def move(loc, direction):
 def is_constrained(curr_loc, next_loc, next_time, constraint_table):
     if next_time in constraint_table:
         for constraint in constraint_table[next_time]:
-            if [next_loc] == constraint["position"] or [
-                curr_loc,
-                next_loc,
-            ] == constraint["position"]:
+            if [next_loc] == constraint["position"]:
                 return True
     return False
 
