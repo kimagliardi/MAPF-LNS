@@ -1,16 +1,24 @@
 import heapq
 
+DIRECTIONS = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Up, Right, Down, Left
+
+
+def manhattan_distance(loc1, loc2):
+    """
+    Calculate the Manhattan distance between two locations.
+    loc1 and loc2 are tuples representing (row, column) coordinates.
+    """
+    return abs(loc1[0] - loc2[0]) + abs(loc1[1] - loc2[1])
+
 
 def move(loc, direction):
-    directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
-    return loc[0] + directions[direction][0], loc[1] + directions[direction][1]
+    return loc[0] + DIRECTIONS[direction][0], loc[1] + DIRECTIONS[direction][1]
 
 
 def get_sum_of_cost(paths):
     rst = 0
-    for path in paths:
-        rst += len(path) - 1
-    return rst
+    rst += [len(path) - 1 for path in paths if path is not None]
+    return sum(rst)
 
 
 def compute_heuristics(my_map, goal):
@@ -50,27 +58,6 @@ def compute_heuristics(my_map, goal):
     for loc, node in closed_list.items():
         h_values[loc] = node["cost"]
     return h_values
-
-
-def build_constraint_table(constraints, agent):
-    ##############################
-    # Task 1.2/1.3: Return a table that constains the list of constraints of
-    #               the given agent for each time step. The table can be used
-    #               for a more efficient constraint violation check in the
-    #               is_constrained function.
-    c_table = dict()
-    for c in constraints:
-        # we need to consider only the constraints for the given agent
-        # 4.1 Supporting positive constraints
-        if not "positive" in c.keys():
-            c["positive"] = False
-        if c["agent"] == agent:
-            timestep = c["timestep"]
-            if timestep not in c_table:
-                c_table[timestep] = [c]
-            else:
-                c_table[timestep].append(c)
-    return c_table
 
 
 def get_location(path, time):
@@ -151,7 +138,8 @@ def compare_nodes(n1, n2):
 
 
 def a_star(my_map, start_loc, goal_loc, h_values, agent, constraints):
-    """my_map      - binary obstacle map
+    """
+    my_map      - binary obstacle map
     start_loc   - start position
     goal_loc    - goal position
     agent       - the agent that is being re-planned
@@ -165,7 +153,7 @@ def a_star(my_map, start_loc, goal_loc, h_values, agent, constraints):
     open_list = []
     closed_list = dict()
     h_value = h_values[start_loc]
-    c_table = build_constraint_table(constraints, agent)
+    c_table = {}
     root = {"loc": start_loc, "g_val": 0, "h_val": h_value, "parent": None, "time": 0}
     push_node(open_list, root)
     closed_list[(start_loc, 0)] = root
