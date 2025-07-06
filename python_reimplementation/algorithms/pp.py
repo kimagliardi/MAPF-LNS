@@ -9,6 +9,9 @@ RIGHT: Final[tuple] = (0, 1)
 STILL: Final[tuple] = (0, 0)
 DIRECTIONS: Final[list] = [UP, DOWN, LEFT, RIGHT, STILL]  # Up, Down, Left, Right, Still
 
+# Define a global variable to track if the goal has been reached
+GOAL_CONSTRAINTS = []  # List to store goal constraints
+
 
 class Agent:
     def __init__(self, id, start, goal):
@@ -57,6 +60,17 @@ class PrioritizedPlanningSolver:
                                 "is_goal": time == len(agent.path) - 1,
                             }
                         )
+                        if time == len(agent.path) - 1:
+                            global GOAL_CONSTRAINTS
+                            GOAL_CONSTRAINTS.append(
+                                {
+                                    "agent": other_agent.id,
+                                    "position": [position],
+                                    "time": time,
+                                    "is_goal": True,
+                                }
+                            )
+
                         constraints.append(
                             {
                                 "agent": other_agent.id,
@@ -127,7 +141,10 @@ class PrioritizedPlanningSolver:
                         neighbor = (next_x, next_y)
                         if (neighbor, g + 1) not in closed_set:
                             if is_constrained(
-                                current, neighbor, g + 1, formatted_constraints
+                                agent,
+                                neighbor,
+                                g + 1,
+                                formatted_constraints,
                             ):
                                 continue
                             new_path = path + [neighbor]
@@ -181,10 +198,15 @@ def move(loc, direction):
     return [loc[0] + direction[0], loc[1] + direction[1]]
 
 
-def is_constrained(curr_loc, next_loc, next_time, constraint_table):
+def is_constrained(agent, next_loc, next_time, constraint_table):
     if next_time in constraint_table:
         for constraint in constraint_table[next_time]:
             if [next_loc] == constraint["position"]:
+                return True
+    global GOAL_CONSTRAINTS
+    for gc in GOAL_CONSTRAINTS:
+        if gc["agent"] == agent.id and gc["time"] <= next_time:
+            if gc["position"] == [next_loc]:
                 return True
     return False
 
