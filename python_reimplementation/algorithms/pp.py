@@ -1,4 +1,5 @@
 import heapq
+import random
 from typing import Final
 
 UP: Final[tuple] = (-1, 0)
@@ -37,9 +38,12 @@ class PrioritizedPlanningSolver:
     def plan_paths(self):
         constraints = []
         for agent in self.agents:
-            path = self.a_star(agent, constraints)
-            agent.set_path(path)
-
+            if not agent.path:
+                #    print(
+                #        f"Planning path for agent {agent.id} from {agent.start} to {agent.goal}"
+                #    )
+                path = self.a_star(agent, constraints)
+                agent.set_path(path)
             # Update constraints with the new path
             for time, position in enumerate(agent.path):
                 for other_agent in self.agents:
@@ -71,7 +75,7 @@ class PrioritizedPlanningSolver:
                                 }
                             )
 
-            print(f"Agent {agent.id} path: {agent.path}")
+            # print(f"Agent {agent.id} path: {agent.path}")
         return self.agents
 
     def a_star(self, agent, constraints):
@@ -106,14 +110,16 @@ class PrioritizedPlanningSolver:
                 future_constraints is None or g > max(future_constraints)
             ):
                 agent.set_path(path)
-                print(f"Found path for agent {agent.id}: {path}")
+                # print(f"Found path for agent {agent.id}: {path}")
                 return path
 
             if (current, g) in closed_set:
                 continue
             closed_set.add((current, g))
 
-            for direction in DIRECTIONS:
+            local_directions = DIRECTIONS.copy()
+            random.shuffle(local_directions)
+            for direction in local_directions:
                 next_x, next_y = move(current, direction)
 
                 if (0 <= next_x < rows) and (0 <= next_y < cols):

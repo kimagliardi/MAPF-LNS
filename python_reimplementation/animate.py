@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import animation
 
-Colors = ['green', 'blue', 'orange','yellow']
+Colors = ["green", "blue", "orange", "yellow"]
 
 
 class Animation:
@@ -27,8 +27,10 @@ class Animation:
         aspect = len(self.my_map) / len(self.my_map[0])
 
         self.fig = plt.figure(frameon=False, figsize=(4 * aspect, 4))
-        self.ax = self.fig.add_subplot(111, aspect='equal')
-        self.fig.subplots_adjust(left=0, right=1, bottom=0, top=1, wspace=None, hspace=None)
+        self.ax = self.fig.add_subplot(111, aspect="equal")
+        self.fig.subplots_adjust(
+            left=0, right=1, bottom=0, top=1, wspace=None, hspace=None
+        )
         # self.ax.set_frame_on(False)
 
         self.patches = []
@@ -44,46 +46,74 @@ class Animation:
         plt.xlim(x_min, x_max)
         plt.ylim(y_min, y_max)
 
-        self.patches.append(Rectangle((x_min, y_min), x_max - x_min, y_max - y_min, facecolor='none', edgecolor='gray'))
+        self.patches.append(
+            Rectangle(
+                (x_min, y_min),
+                x_max - x_min,
+                y_max - y_min,
+                facecolor="none",
+                edgecolor="gray",
+            )
+        )
         for i in range(len(self.my_map)):
             for j in range(len(self.my_map[0])):
-                if self.my_map[i][j] == '.':
-                    self.patches.append(Rectangle((i - 0.5, j - 0.5), 1, 1, facecolor='gray', edgecolor='gray'))
+                if self.my_map[i][j] == ".":
+                    self.patches.append(
+                        Rectangle(
+                            (i - 0.5, j - 0.5), 1, 1, facecolor="gray", edgecolor="gray"
+                        )
+                    )
 
         # create agents:
         self.T = 0
         # draw goals first
         for i, goal in enumerate(self.goals):
-            self.patches.append(Rectangle((goal[0] - 0.25, goal[1] - 0.25), 0.5, 0.5, facecolor=Colors[i % len(Colors)],
-                                          edgecolor='black', alpha=0.5))
+            self.patches.append(
+                Rectangle(
+                    (goal[0] - 0.25, goal[1] - 0.25),
+                    0.5,
+                    0.5,
+                    facecolor=Colors[i % len(Colors)],
+                    edgecolor="black",
+                    alpha=0.5,
+                )
+            )
         for i in range(len(self.paths)):
             name = str(i)
-            self.agents[i] = Circle((starts[i][0], starts[i][1]), 0.3, facecolor=Colors[i % len(Colors)],
-                                    edgecolor='black')
+            self.agents[i] = Circle(
+                (starts[i][0], starts[i][1]),
+                0.3,
+                facecolor=Colors[i % len(Colors)],
+                edgecolor="black",
+            )
             self.agents[i].original_face_color = Colors[i % len(Colors)]
             self.patches.append(self.agents[i])
             self.T = max(self.T, len(paths[i]) - 1)
             self.agent_names[i] = self.ax.text(starts[i][0], starts[i][1] + 0.25, name)
-            self.agent_names[i].set_horizontalalignment('center')
-            self.agent_names[i].set_verticalalignment('center')
+            self.agent_names[i].set_horizontalalignment("center")
+            self.agent_names[i].set_verticalalignment("center")
             self.artists.append(self.agent_names[i])
 
-        self.animation = animation.FuncAnimation(self.fig, self.animate_func,
-                                                 init_func=self.init_func,
-                                                 frames=int(self.T + 1) * 10,
-                                                 interval=5,#speed
-                                                 blit=True)
+        self.animation = animation.FuncAnimation(
+            self.fig,
+            self.animate_func,
+            init_func=self.init_func,
+            frames=int(self.T + 1) * 10,
+            interval=5,  # speed
+            blit=True,
+        )
 
     def save(self, file_name, speed):
         self.animation.save(
             file_name,
             fps=10 * speed,
             dpi=200,
-            savefig_kwargs={"pad_inches": 0, "bbox_inches": "tight"})
+            savefig_kwargs={"pad_inches": 0, "bbox_inches": "tight"},
+        )
 
     @staticmethod
     def show():
-        plt.show()
+        plt.show(block=False)
 
     def init_func(self):
         for p in self.patches:
@@ -111,9 +141,13 @@ class Animation:
                 pos1 = np.array(d1.center)
                 pos2 = np.array(d2.center)
                 if np.linalg.norm(pos1 - pos2) < 0.7:
-                    d1.set_facecolor('red')
-                    d2.set_facecolor('red')
-                    print("COLLISION! (agent-agent) ({}, {}) at time {}".format(i, j, t/10))
+                    d1.set_facecolor("red")
+                    d2.set_facecolor("red")
+                    print(
+                        "COLLISION! (agent-agent) ({}, {}) at time {}".format(
+                            i, j, t / 10
+                        )
+                    )
 
         return self.patches + self.artists
 
