@@ -31,39 +31,41 @@ def main():
 
     start_time = time.time()
     agents = solver.plan_paths()
-    paths = [agent.path for agent in agents] if agents else None
     runtime = time.time() - start_time
+    paths = [agent.path for agent in agents] if agents else None
 
     total_cost = sum(len(path) - 1 for path in paths)
 
-    # Output
-    if paths is None:
-        print("Failed to find paths for all agents.")
-    else:
+    # Replan paths using LNS
+
+    randomized_agents = []
+    for agent in agents:
+        randomized_agents.append(agent)
+
+    for i, path in enumerate(paths):
+        print(f"Agent {i}: {path}")
+
+    # (Optional) save to file
+    with open("results/solution_output.txt", "w") as f:
         for i, path in enumerate(paths):
-            print(f"Agent {i}: {path}")
+            f.write(f"Agent {i}: {path}\n")
 
-        # (Optional) save to file
-        with open("results/solution_output.txt", "w") as f:
-            for i, path in enumerate(paths):
-                f.write(f"Agent {i}: {path}\n")
+    # Visualization of the paths
+    plot_paths(map_data, starts, goals, paths)
 
-        # Visualization of the paths
-        plot_paths(map_data, starts, goals, paths)
+    print("Paths visualized and saved to results/paths_visualization.png")
+    # Animation of the paths
+    animation = Animation(map_data, starts, goals, paths)
+    animation.show()
 
-        print("Paths visualized and saved to results/paths_visualization.png")
-        # Animation of the paths
-        animation = Animation(map_data, starts, goals, paths)
-        animation.show()
+    print(f"\nExecution time: {runtime:.4f} seconds")
 
-        print(f"\nExecution time: {runtime:.4f} seconds")
+    print(f"Sum of path lengths: {total_cost}")
 
-        print(f"Sum of path lengths: {total_cost}")
-
-        # Save to file
-        with open("results/pp_python_results.txt", "w") as f:
-            f.write(f"Execution time: {runtime:.4f} seconds\n")
-            f.write(f"Sum of path lengths: {total_cost}\n")
+    # Save to file
+    with open("results/pp_python_results.txt", "w") as f:
+        f.write(f"Execution time: {runtime:.4f} seconds\n")
+        f.write(f"Sum of path lengths: {total_cost}\n")
 
 
 if __name__ == "__main__":
