@@ -1,6 +1,5 @@
 import heapq
 from typing import Final
-from .a_star import manhattan_distance
 
 UP: Final[tuple] = (-1, 0)
 DOWN: Final[tuple] = (1, 0)
@@ -28,29 +27,23 @@ class Agent:
 
 
 class PrioritizedPlanningSolver:
-    def __init__(self, map_data, starts, goals):
+    def __init__(self, map_data, agents):
         self.map = map_data
-        self.starts = starts
-        self.goals = goals
-        self.agents = []
+        self.agents = agents
 
-        idx = 0
-        for start, goal in zip(self.starts, self.goals):
-            self.agents.append(Agent(idx, start, goal))
-            idx += 1
+    def set_agents(self, agents):
+        self.agents = agents
 
     def plan_paths(self):
-        all_paths = []
         constraints = []
         for agent in self.agents:
             path = self.a_star(agent, constraints)
             agent.set_path(path)
-            all_paths.append(agent.path)
 
             # Update constraints with the new path
             for time, position in enumerate(agent.path):
                 for other_agent in self.agents:
-                    if other_agent.id > agent.id:
+                    if other_agent.id != agent.id:
                         # Add constraints for other agents' positions at this time step
                         constraints.append(
                             {
@@ -79,7 +72,7 @@ class PrioritizedPlanningSolver:
                             )
 
             print(f"Agent {agent.id} path: {agent.path}")
-        return all_paths
+        return self.agents
 
     def a_star(self, agent, constraints):
         open_list = []
@@ -196,3 +189,11 @@ def get_when_goal_constrained(goal_loc, constraint_table):
         return None
     time_list = [item["time"] for item in items if not item["is_goal"]]
     return time_list
+
+
+def manhattan_distance(loc1, loc2):
+    """
+    Calculate the Manhattan distance between two locations.
+    loc1 and loc2 are tuples representing (row, column) coordinates.
+    """
+    return abs(loc1[0] - loc2[0]) + abs(loc1[1] - loc2[1])

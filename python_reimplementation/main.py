@@ -1,5 +1,5 @@
 from utils.parser import read_map_file, read_scen_file
-from algorithms.pp import PrioritizedPlanningSolver
+from algorithms.pp import PrioritizedPlanningSolver, Agent
 from visualize import plot_paths
 from animate import Animation
 import os
@@ -20,11 +20,18 @@ def main():
         scen_file, num_agents=15
     )  # initial test with 5 agents
 
+    idx = 0
+    agents = []
+    for start, goal in zip(starts, goals):
+        agents.append(Agent(idx, start, goal))
+        idx += 1
+
     # Planning
-    solver = PrioritizedPlanningSolver(map_data, starts, goals)
+    solver = PrioritizedPlanningSolver(map_data, agents)
 
     start_time = time.time()
-    paths = solver.plan_paths()
+    agents = solver.plan_paths()
+    paths = [agent.path for agent in agents] if agents else None
     runtime = time.time() - start_time
 
     total_cost = sum(len(path) - 1 for path in paths)
