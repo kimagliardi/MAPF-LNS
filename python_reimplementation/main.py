@@ -7,18 +7,22 @@ import time
 import random
 import matplotlib.pyplot as plt
 import multiprocessing
+import pandas as pd
 
 # Ensure that the results folder exists
 os.makedirs("results", exist_ok=True)
 
 AGENT_COUNT = 15  # Default number of agents, can be adjusted
 RANDOMIZER = 0.3  # Randomization factor for LNS replanning
-TIMEOUT = 30  # Timeout for the LNS replanning in seconds
+TIMEOUT = 10  # Timeout for the LNS replanning in seconds
 RANDOMIZE_AGENTS = False  # Whether to randomize agents before initial planning
 
 
 class MAPFResults:
-    def __init__(self, map_data, starts, goals, paths, runtime, total_cost):
+    def __init__(
+        self, execution_number, map_data, starts, goals, paths, runtime, total_cost
+    ):
+        self.execution_number = (execution_number,)  # This can be set later if needed
         self.map_data = map_data
         self.starts = starts
         self.goals = goals
@@ -33,6 +37,8 @@ def planner(queue):
     scen_file = "python_reimplementation/examples/random-32-32-20-random-1.scen"
     initial_exhibition_data = None
     final_exhibition_data = None
+    all_results = []
+
     global AGENT_COUNT, RANDOMIZER, TIMEOUT
 
     # Data reading
@@ -67,6 +73,7 @@ def planner(queue):
     best_cost = total_cost
     print(f"Initial total cost: {total_cost} in execution {execution_number}")
     initial_exhibition_data = MAPFResults(
+        execution_number=execution_number,
         map_data=map_data,
         starts=starts,
         goals=goals,
@@ -75,6 +82,7 @@ def planner(queue):
         total_cost=total_cost,
     )
 
+    all_results.append(initial_exhibition_data)
     print("Starting LNS replanning...")
     while True:
         agents_copy = agents.copy()
@@ -105,6 +113,7 @@ def planner(queue):
             best_cost = total_cost
             agents = agents_copy  # Update the agents with the new paths
             final_exhibition_data = MAPFResults(
+                execution_number=execution_number,
                 map_data=map_data,
                 starts=starts,
                 goals=goals,
@@ -112,6 +121,7 @@ def planner(queue):
                 runtime=runtime,
                 total_cost=total_cost,
             )
+            all_results.append(final_exhibition_data)
             print(f"\tNew best cost found: {best_cost} in execution {execution_number}")
         try:
             queue.get(block=False)
@@ -125,6 +135,7 @@ def planner(queue):
         {
             "Initial Solution": initial_exhibition_data,
             "Final Solution": final_exhibition_data,
+            "All Solutions": all_results,
         }
     )  # Send the final exhibition data to the main process
 
@@ -194,6 +205,26 @@ def animate_results(exhibition_data, chart_title="MAPF Paths Visualization"):
     plt.show()
 
 
+def show_chart(all_solutions):
+
+    results_dataframe = pd.DataFrame(
+        {
+            "Execution Number": [sol.execution_number[0] for sol in all_solutions],
+            "Execution Time (s)": [sol.runtime for sol in all_solutions],
+            "Sum of Path Lengths": [sol.total_cost for sol in all_solutions],
+        }
+    )
+    results_dataframe.plot(
+        x="Execution Number",
+        y=["Sum of Path Lengths"],
+        kind="line",
+        title="Sum of Path Lengths Over Executions",
+        ylim=(0, results_dataframe["Sum of Path Lengths"].max() + 10),
+    )
+    plt.savefig("results/execution_time_and_costs.png")
+    plt.show()
+
+
 def main():
 
     queue = multiprocessing.Queue()
@@ -209,6 +240,7 @@ def main():
     solutions = queue.get()
     initial_exhibition_data = solutions["Initial Solution"]
     final_exhibition_data = solutions["Final Solution"]
+    all_solutions = solutions["All Solutions"]
 
     e1 = multiprocessing.Process(
         target=animate_results,
@@ -224,6 +256,10 @@ def main():
             "Final Solution",
         ),
     )
+    e3 = multiprocessing.Process(
+        target=show_chart,
+        args=(all_solutions,),
+    )
 
     store_results_to_file(initial_exhibition_data, final_exhibition_data)
 
@@ -231,12 +267,16 @@ def main():
     e2.start()
     e1.join()
     e2.join()
+    e3.start()
+    e3.join()
 
     # Clean up the processes
     if e1.is_alive():
         e1.terminate()
     if e2.is_alive():
         e2.terminate()
+    if e3.is_alive():
+        e3.terminate()
 
 
 if __name__ == "__main__":

@@ -1,2 +1,2 @@
-Execution time: 0.9075 seconds
+Execution time: 3.3829 seconds
 Sum of path lengths: 330
